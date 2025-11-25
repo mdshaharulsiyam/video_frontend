@@ -20,7 +20,7 @@ export default function App() {
   const [current, setCurrent] = useState(null);
 
   async function fetchShorts(signal) {
-    const url = new URL(API_BASE + '/api/shorts', window.location.origin);
+    const url = new URL('/api/shorts', API_BASE || window.location.origin);
     if (query) url.searchParams.set('q', query);
     const res = await fetch(url, { credentials: 'omit', signal });
     if (!res.ok) throw new Error('Failed to fetch');
