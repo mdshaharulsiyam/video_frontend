@@ -5,7 +5,7 @@ import PlayerModal from './components/PlayerModal.jsx';
 import Tag from './components/Tag.jsx';
 import './style.css';
 
-const API_BASE = 'https://video-backend-sable.vercel.app/';
+const API_BASE = 'https://video-backend-sable.vercel.app';
 
 const STATIC_TAGS = [
   'animals', 'nature', 'classic', 'sample', 'short', 'demo', 'longer', 'sea', 'relax', 'city', 'travel', 'mountain', 'sports', 'fun'
