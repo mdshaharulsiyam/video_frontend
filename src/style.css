@@ -148,6 +148,9 @@ body {
   padding: 0;
   background: transparent;
 }
+dialog:not([open]) {
+  display: none;
+}
 .dialog .dialog-content {
   width: min(960px, 94vw);
   margin: 8vh auto;
@@ -177,6 +180,7 @@ body {
   color: #fff;
   cursor: pointer;
   font-size: 20px;
+  z-index: 10;
 }
 .error {
   padding: 16px;

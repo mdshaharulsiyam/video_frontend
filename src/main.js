@@ -12,7 +12,7 @@ app.innerHTML = `
 
     <dialog id="player" class="dialog">
       <div class="dialog-content">
-        <button id="close" class="close" aria-label="Close">×</button>
+        <button id="close" type="button" class="close" aria-label="Close">×</button>
         <video id="playerVideo" controls playsinline preload="metadata"></video>
         <div class="meta">
           <h2 id="playerTitle"></h2>
@@ -54,11 +54,27 @@ function renderTags(list) {
   unique.forEach(t => { const b = document.createElement('button'); b.textContent = t; b.className = 'tag' + (activeTag === t ? ' active' : ''); b.onclick = () => { activeTag = activeTag === t ? '' : t; refresh() }; tags.appendChild(b); });
 }
 
-function openPlayer(item) { playerVideo.src = item.videoUrl + '#t=0.001'; playerTitle.textContent = item.title || 'Untitled'; playerTags.innerHTML = ''; (item.tags || []).forEach(t => playerTags.appendChild(pill(t))); dialog.showModal?.(); }
-function closePlayer() { playerVideo.pause(); playerVideo.removeAttribute('src'); playerVideo.load(); dialog.close(); }
+function openPlayer(item) {
+  playerVideo.src = item.videoUrl + '#t=0.001';
+  playerTitle.textContent = item.title || 'Untitled';
+  playerTags.innerHTML = '';
+  (item.tags || []).forEach(t => playerTags.appendChild(pill(t)));
+  if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', 'true');
+}
+function closePlayer() {
+  playerVideo.pause();
+  playerVideo.removeAttribute('src');
+  playerVideo.load();
+  if (typeof dialog.close === 'function') dialog.close(); else dialog.removeAttribute('open');
+}
 closeBtn.addEventListener('click', closePlayer);
 
+// Close when clicking outside content
 dialog.addEventListener('click', e => { const rect = dialog.querySelector('.dialog-content').getBoundingClientRect(); if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) closePlayer(); });
+// Prevent inside clicks from bubbling to dialog
+dialog.querySelector('.dialog-content').addEventListener('click', e => e.stopPropagation());
+// ESC key/cancel support
+dialog.addEventListener('cancel', e => { e.preventDefault(); closePlayer(); });
 
 function renderGrid(list) { grid.innerHTML = ''; const frag = document.createDocumentFragment(); list.forEach(item => { const card = document.createElement('article'); card.className = 'card'; card.innerHTML = `<div class="thumb"><video muted preload="metadata" src="${item.videoUrl}#t=0.1"></video></div><div class="info"><h3 class="title"></h3><div class="taglist"></div></div>`; card.querySelector('.title').textContent = item.title || 'Untitled'; const tl = card.querySelector('.taglist'); (item.tags || []).forEach(t => tl.appendChild(pill(t))); card.addEventListener('click', () => openPlayer(item)); frag.appendChild(card); }); grid.appendChild(frag); }
 
